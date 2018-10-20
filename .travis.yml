@@ -42,3 +42,4 @@ deploy:
     - output/${EXTENSION_FILENAME}
     - magyarispell/${ISPELL_FILENAME}
   skip_cleanup: true
+  body: "Generated from Magyar Ispell commit: ${ISPELL_COMMIT_HASH} ${ISPELL_COMMIT_DATE}"
