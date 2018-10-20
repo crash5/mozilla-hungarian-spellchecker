@@ -1,0 +1,44 @@
+language: minimal
+
+git:
+  depth: 1
+
+branches:
+  only:
+  - master
+
+install:
+  - sudo apt-get install -y zip m4 recode gawk
+  - curl -sSL https://git.io/get-mo -o mo
+  - chmod +x mo
+
+before_script:
+  - git clone --depth 1 https://github.com/laszlonemeth/magyarispell.git
+  - cd magyarispell
+  - export ISPELL_COMMIT_HASH=$(git log -1 --pretty=format:%h)
+  - export ISPELL_COMMIT_DATE=$(git log -1 --pretty=format:%ad --date=short)
+  - export EXTENSION_VERSION=1.7.0
+  - export EXTENSION_FILENAME=hungarian_dictionary-v${EXTENSION_VERSION}-${ISPELL_COMMIT_DATE}.xpi
+  - export ISPELL_FILENAME=magyarispell_${ISPELL_COMMIT_HASH}-${ISPELL_COMMIT_DATE}.zip
+
+script:
+  - make
+
+before_deploy:
+  - zip -r ${ISPELL_FILENAME} *.dic *.aff
+  - cd ..
+  - mkdir -p output/dictionaries
+  - mv magyarispell/hu_HU_u8_gen_alias.aff output/dictionaries/hu.aff
+  - mv magyarispell/hu_HU_u8_gen_alias.dic output/dictionaries/hu.dic
+  - ./mo install.rdf.mustache > output/install.rdf
+  - cd output
+  - zip -r ${EXTENSION_FILENAME} .
+  - cd ..
+
+deploy:
+  provider: releases
+  api_key: ${GH_TOKEN}
+  file:
+    - output/${EXTENSION_FILENAME}
+    - magyarispell/${ISPELL_FILENAME}
+  skip_cleanup: true
