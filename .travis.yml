@@ -43,7 +43,7 @@ before_deploy:
   - zip -r ${OUTPUT_ROOT_PATH}/${OUTPUT_MOZILLA_DICTIONARY_FILENAME} .
   - cd ${MAGYARISPELL_PATH}
   - export OUTPUT_ISPELL_FILENAME=magyarispell_${ISPELL_COMMIT_HASH}-${ISPELL_COMMIT_DATE}.zip
-  - zip ${OUTPUT_ROOT_PATH}/${OUTPUT_ISPELL_FILENAME} .
+  - zip -r ${OUTPUT_ROOT_PATH}/${OUTPUT_ISPELL_FILENAME} .
   - git config --local user.name "Imre Nagy"
   - git config --local user.email "crash5@users.noreply.github.com"
   - git tag "${ISPELL_COMMIT_DATE}"
