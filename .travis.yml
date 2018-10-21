@@ -62,5 +62,5 @@ deploy:
     body: "Generated from Magyar Ispell (commit hash: ${ISPELL_COMMIT_HASH}, commit date: ${ISPELL_COMMIT_DATE})"
   - provider: pages
     skip-cleanup: true
-    github-token: ${GH_TOKEN}  # Set in the settings page of your repository, as a secure variable
+    github-token: ${GH_TOKEN}
     local-dir: ${WEBSITE_PATH}
