@@ -30,8 +30,6 @@ before_script:
 
 script:
   - make
-
-before_deploy:
   - mkdir ${OUTPUT_ROOT_PATH} ${MOZILLA_DICTIONARY_PATH} ${MAGYARISPELL_PATH} ${WEBSITE_PATH}
   - cp  *.dic ${MAGYARISPELL_PATH}
   - cp  *.aff ${MAGYARISPELL_PATH}
