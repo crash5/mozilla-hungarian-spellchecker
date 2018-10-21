@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/crash5/mozilla-hungarian-spellchecker.svg?branch=master)](https://travis-ci.com/crash5/mozilla-hungarian-spellchecker)
 
-A szótár a Németh László által készített [Magyar Ispell-ből](https://github.com/laszlonemeth/magyarispell) kerül generálásra. Az egyes verziók a [Release](../releases) oldal alatt találhatóak. A kiegészítő neve tartalmazza a felhasznált commit idejét.
+A szótár a Németh László által készített [Magyar Ispell-ből](https://github.com/laszlonemeth/magyarispell) kerül generálásra. Az egyes verziók a [Release](../../releases) oldal alatt találhatóak. A kiegészítő neve tartalmazza a felhasznált commit idejét.
 
 A telepítés az **xpi** kiterjesztésű állománnyal történik.
 
