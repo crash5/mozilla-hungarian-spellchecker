@@ -29,7 +29,7 @@ before_deploy:
   - mkdir -p output/dictionaries
   - mv magyarispell/hu_HU_u8_gen_alias.aff output/dictionaries/hu.aff
   - mv magyarispell/hu_HU_u8_gen_alias.dic output/dictionaries/hu.dic
-  - tools/mo install.rdf.mustache > output/install.rdf
+  - tools/mo templates/install.rdf.mustache > output/install.rdf
   - cd output
   - zip -r ${EXTENSION_FILENAME} .
   - cd ..
