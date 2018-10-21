@@ -9,8 +9,7 @@ branches:
 
 install:
   - sudo apt-get install -y zip m4 recode gawk
-  - curl -sSL https://git.io/get-mo -o mo
-  - chmod +x mo
+  - chmod +x tools/mo
 
 before_script:
   - git clone --depth 1 https://github.com/laszlonemeth/magyarispell.git
@@ -30,7 +29,7 @@ before_deploy:
   - mkdir -p output/dictionaries
   - mv magyarispell/hu_HU_u8_gen_alias.aff output/dictionaries/hu.aff
   - mv magyarispell/hu_HU_u8_gen_alias.dic output/dictionaries/hu.dic
-  - ./mo install.rdf.mustache > output/install.rdf
+  - tools/mo install.rdf.mustache > output/install.rdf
   - cd output
   - zip -r ${EXTENSION_FILENAME} .
   - cd ..
