@@ -61,4 +61,4 @@ deploy:
   - provider: pages
     skip-cleanup: true
     github-token: ${GH_TOKEN}
-    local-dir: ${WEBSITE_PATH}
+    local-dir: output/website
