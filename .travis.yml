@@ -13,6 +13,7 @@ env:
     - OUTPUT_ROOT_PATH=${BUILD_DIR}/output
     - MOZILLA_DICTIONARY_PATH=${OUTPUT_ROOT_PATH}/mozilla-extension
     - MAGYARISPELL_PATH=${OUTPUT_ROOT_PATH}/magyarispell-generated
+    - WEBSITE_PATH=${OUTPUT_ROOT_PATH}/website
 
 before_install:
   - sudo apt-get install -y zip m4 recode gawk
@@ -31,7 +32,7 @@ script:
   - make
 
 before_deploy:
-  - mkdir ${OUTPUT_ROOT_PATH} ${MOZILLA_DICTIONARY_PATH} ${MAGYARISPELL_PATH}
+  - mkdir ${OUTPUT_ROOT_PATH} ${MOZILLA_DICTIONARY_PATH} ${MAGYARISPELL_PATH} ${WEBSITE_PATH}
   - cp  *.dic ${MAGYARISPELL_PATH}
   - cp  *.aff ${MAGYARISPELL_PATH}
   - cd ${MOZILLA_DICTIONARY_PATH}
@@ -44,15 +45,22 @@ before_deploy:
   - cd ${MAGYARISPELL_PATH}
   - export OUTPUT_ISPELL_FILENAME=magyarispell_${ISPELL_COMMIT_HASH}-${ISPELL_COMMIT_DATE}.zip
   - zip -r ${OUTPUT_ROOT_PATH}/${OUTPUT_ISPELL_FILENAME} .
+  - cd ${WEBSITE_PATH}
+  - ${BUILD_DIR}/tools/mo ${BUILD_DIR}/templates/update.json.mustache > update.json
+  - cp ${BUILD_DIR}/templates/index.html .
   - git config --local user.name "Imre Nagy"
   - git config --local user.email "crash5@users.noreply.github.com"
   - git tag "${ISPELL_COMMIT_DATE}"
 
 deploy:
-  provider: releases
-  api_key: ${GH_TOKEN}
-  file:
-    - ${OUTPUT_ROOT_PATH}/${OUTPUT_MOZILLA_DICTIONARY_FILENAME}
-    - ${OUTPUT_ROOT_PATH}/${OUTPUT_ISPELL_FILENAME}
-  skip_cleanup: true
-  body: "Generated from Magyar Ispell (commit hash: ${ISPELL_COMMIT_HASH}, commit date: ${ISPELL_COMMIT_DATE})"
+  - provider: releases
+    api_key: ${GH_TOKEN}
+    file:
+      - ${OUTPUT_ROOT_PATH}/${OUTPUT_MOZILLA_DICTIONARY_FILENAME}
+      - ${OUTPUT_ROOT_PATH}/${OUTPUT_ISPELL_FILENAME}
+    skip_cleanup: true
+    body: "Generated from Magyar Ispell (commit hash: ${ISPELL_COMMIT_HASH}, commit date: ${ISPELL_COMMIT_DATE})"
+  - provider: pages
+    skip-cleanup: true
+    github-token: ${GH_TOKEN}  # Set in the settings page of your repository, as a secure variable
+    local-dir: ${WEBSITE_PATH}
