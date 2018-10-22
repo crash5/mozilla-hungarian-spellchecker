@@ -11,4 +11,4 @@ if [[ ${#@} -lt 2 ]]; then
 fi
 
 mo "${TEMPLATE_PATH}"/update.json.mustache > "${OUTPUTH_PATH}"/update.json
-cp "${TEMPLATE_PATH}"/index.html "${OUTPUTH_PATH}"
+mo "${TEMPLATE_PATH}"/index.html.mustache > "${OUTPUTH_PATH}"/index.html
