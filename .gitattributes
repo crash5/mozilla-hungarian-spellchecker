@@ -1,0 +1,3 @@
+* text
+*.sh eol=lf
+tools/mo eol=lf

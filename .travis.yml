@@ -7,57 +7,40 @@ branches:
   only:
   - master
 
-env:
-  global:
-    - BUILD_DIR=${TRAVIS_BUILD_DIR}
-    - OUTPUT_ROOT_PATH=${BUILD_DIR}/output
-    - MOZILLA_DICTIONARY_PATH=${OUTPUT_ROOT_PATH}/mozilla-extension
-    - MAGYARISPELL_PATH=${OUTPUT_ROOT_PATH}/magyarispell-generated
-    - WEBSITE_PATH=${OUTPUT_ROOT_PATH}/website
-
-before_install:
-  - sudo apt-get install -y zip m4 recode gawk
-  - chmod +x tools/mo
-
 install:
-  - git clone --depth 1 https://github.com/laszlonemeth/magyarispell.git
+  - sudo apt-get install -y zip m4 recode gawk
 
 before_script:
+  - git clone --depth 1 https://github.com/laszlonemeth/magyarispell.git
   - cd magyarispell
   - export ISPELL_COMMIT_HASH=$(git log -1 --pretty=format:%h)
   - export ISPELL_COMMIT_DATE=$(git log -1 --pretty=format:%ad --date=format:%Y.%m.%d.%H.%M)
   - export EXTENSION_VERSION=${ISPELL_COMMIT_DATE}
+  - export EXTENSION_FILE_NAME=hungarian_dictionary-${EXTENSION_VERSION}.xpi
+  - export MAGYARISPELL_FILE_NAME=MagyarIspell_${ISPELL_COMMIT_HASH}.zip
+  - make
+  - cd ..
 
 script:
-  - make
-  - mkdir ${OUTPUT_ROOT_PATH} ${MOZILLA_DICTIONARY_PATH} ${MAGYARISPELL_PATH} ${WEBSITE_PATH}
-  - cp  *.dic ${MAGYARISPELL_PATH}
-  - cp  *.aff ${MAGYARISPELL_PATH}
-  - cd ${MOZILLA_DICTIONARY_PATH}
-  - mkdir -p dictionaries
-  - cp ${MAGYARISPELL_PATH}/hu_HU_u8_gen_alias.aff dictionaries/hu.aff
-  - cp ${MAGYARISPELL_PATH}/hu_HU_u8_gen_alias.dic dictionaries/hu.dic
-  - ${BUILD_DIR}/tools/mo ${BUILD_DIR}/templates/install.rdf.mustache > install.rdf
-  - export OUTPUT_MOZILLA_DICTIONARY_FILENAME=hungarian_dictionary-${EXTENSION_VERSION}.xpi
-  - zip -r ${OUTPUT_ROOT_PATH}/${OUTPUT_MOZILLA_DICTIONARY_FILENAME} .
-  - cd ${MAGYARISPELL_PATH}
-  - export OUTPUT_ISPELL_FILENAME=magyarispell_${ISPELL_COMMIT_HASH}-${ISPELL_COMMIT_DATE}.zip
-  - zip -r ${OUTPUT_ROOT_PATH}/${OUTPUT_ISPELL_FILENAME} .
-  - cd ${WEBSITE_PATH}
-  - ${BUILD_DIR}/tools/mo ${BUILD_DIR}/templates/update.json.mustache > update.json
-  - cp ${BUILD_DIR}/templates/index.html .
-  - git config --local user.name "Imre Nagy"
-  - git config --local user.email "crash5@users.noreply.github.com"
-  - git tag "${ISPELL_COMMIT_DATE}"
+  - export PATH=$(pwd)/tools:$PATH
+  - chmod +x tools/mo
+  - mkdir output
+  - bash ./scripts/create_ispell_archive.sh magyarispell/ output/${MAGYARISPELL_FILE_NAME}
+  - bash ./scripts/create_mozilla_dictionary.sh magyarispell/ templates/install.rdf.mustache output/${EXTENSION_FILE_NAME}
+  - mkdir -p output/website
+  - bash ./scripts/create_website.sh templates/ output/website/
+
+after_script:
+  - git tag "${EXTENSION_VERSION}"
 
 deploy:
   - provider: releases
     api_key: ${GH_TOKEN}
     file:
-      - ${OUTPUT_ROOT_PATH}/${OUTPUT_MOZILLA_DICTIONARY_FILENAME}
-      - ${OUTPUT_ROOT_PATH}/${OUTPUT_ISPELL_FILENAME}
+      - output/${EXTENSION_FILE_NAME}
+      - output/${MAGYARISPELL_FILE_NAME}
     skip_cleanup: true
-    body: "Generated from Magyar Ispell (commit hash: ${ISPELL_COMMIT_HASH}, commit date: ${ISPELL_COMMIT_DATE})"
+    body: "Generated from Magyar Ispell https://github.com/laszlonemeth/magyarispell (commit hash: ${ISPELL_COMMIT_HASH})"
   - provider: pages
     skip-cleanup: true
     github-token: ${GH_TOKEN}
