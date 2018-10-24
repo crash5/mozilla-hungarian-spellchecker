@@ -17,6 +17,8 @@ cd "${TEMPORARY_WORK_DIR}"
 mkdir dictionaries
 cp "${ISPELL_DICTIONARIES_SOURCE_PATH}"/hu_HU_u8_gen_alias.aff dictionaries/hu.aff
 cp "${ISPELL_DICTIONARIES_SOURCE_PATH}"/hu_HU_u8_gen_alias.dic dictionaries/hu.dic
+cp "${ISPELL_DICTIONARIES_SOURCE_PATH}"/OLVASSEL dictionaries/README.hu
+cp "${ISPELL_DICTIONARIES_SOURCE_PATH}"/README dictionaries/README.en
 mo "${INSTALL_RDF_TEMPLATE}" > install.rdf
 zip -r "${OUTPUT_FILE}" .
 
