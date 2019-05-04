@@ -32,7 +32,7 @@ script:
   - mkdir -p output/website
   - bash ./scripts/create_website.sh templates/ output/website/
   - git tag "${EXTENSION_VERSION}"
-  - git push https://crash5:${GH_TOKEN}@github.com/crash5/mozilla-hungarian-spellchecker.git > /dev/null 2>&1 "${EXTENSION_VERSION}"
+  - git push --quiet https://crash5:${GH_TOKEN}@github.com/crash5/mozilla-hungarian-spellchecker.git "${EXTENSION_VERSION}" > /dev/null 2>&1
 
 deploy:
   - provider: releases
