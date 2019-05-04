@@ -30,6 +30,7 @@ script:
   - mkdir -p output/website
   - bash ./scripts/create_website.sh templates/ output/website/
   - git tag "${EXTENSION_VERSION}"
+  - git push origin "${EXTENSION_VERSION}"
 
 deploy:
   - provider: releases
