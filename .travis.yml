@@ -29,8 +29,6 @@ script:
   - bash ./scripts/create_mozilla_dictionary.sh magyarispell/ templates/install.rdf.mustache templates/manifest.json.mustache output/${EXTENSION_FILE_NAME}
   - mkdir -p output/website
   - bash ./scripts/create_website.sh templates/ output/website/
-
-before_deploy:
   - export TRAVIS_TAG="${EXTENSION_VERSION}"
   - git tag $TRAVIS_TAG
 
