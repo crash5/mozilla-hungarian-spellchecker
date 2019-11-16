@@ -1,0 +1,93 @@
+name: Create new extension version
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Get magyarispell
+      uses: actions/checkout@v1
+      with:
+        repository: laszlonemeth/magyarispell
+        ref: refs/heads/master
+        fetch-depth: 1
+
+    - name: Setup environment variables
+      run: |
+        cd ../magyarispell
+        export ISPELL_COMMIT_HASH=$(git log -1 --pretty=format:%h)
+        export ISPELL_COMMIT_DATE=$(git log -1 --pretty=format:%ad --date=format:%Y.%m.%d.%H.%M)
+        export EXTENSION_VERSION=${ISPELL_COMMIT_DATE}
+        export EXTENSION_FILE_NAME=hungarian_dictionary-${EXTENSION_VERSION}.xpi
+        export MAGYARISPELL_FILE_NAME=MagyarIspell_${ISPELL_COMMIT_HASH}.zip
+        echo "::set-env name=ISPELL_COMMIT_HASH::${ISPELL_COMMIT_HASH}"
+        echo "::set-env name=EXTENSION_VERSION::${EXTENSION_VERSION}"
+        echo "::set-env name=EXTENSION_FILE_NAME::${EXTENSION_FILE_NAME}"
+        echo "::set-env name=MAGYARISPELL_FILE_NAME::${MAGYARISPELL_FILE_NAME}"
+
+    - name: Install dependencies for build
+      run: sudo apt-get install -y zip m4 recode gawk
+
+    - name: Build magyarispell
+      run: |
+        cd ../magyarispell
+        make
+
+
+# Create packages
+    - name: Checkout tools and scripts
+      uses: actions/checkout@v1
+
+    - name: Create packages
+      run: |
+        export PATH=$(pwd)/tools:$PATH
+        chmod +x tools/mo
+        mkdir output
+        bash ./scripts/create_ispell_archive.sh ../magyarispell/ output/${MAGYARISPELL_FILE_NAME}
+        bash ./scripts/create_mozilla_dictionary.sh ../magyarispell/ templates/install.rdf.mustache templates/manifest.json.mustache output/${EXTENSION_FILE_NAME}
+        mkdir -p output/website
+        bash ./scripts/create_website.sh templates/ output/website/
+
+
+# Deploy
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided by GH Actions
+      with:
+        tag_name: ${{ env.EXTENSION_VERSION }}
+        release_name: ${{ env.EXTENSION_VERSION }}
+        body: "Generated from Magyar Ispell https://github.com/laszlonemeth/magyarispell (commit hash: ${{ env.ISPELL_COMMIT_HASH }})"
+
+    - name: Upload extension to release
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided by GH Actions
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./output/${{ env.EXTENSION_FILE_NAME }}
+        asset_name: ${{ env.EXTENSION_FILE_NAME }}
+        asset_content_type: application/x-xpinstall
+
+    - name: Upload compiled magyarispell to release
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided by GH Actions
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./output/${{ env.MAGYARISPELL_FILE_NAME }}
+        asset_name: ${{ env.MAGYARISPELL_FILE_NAME }}
+        asset_content_type: application/zip
+
+    - name: Deploy to GitHub Pages
+      env:
+        INPUT_TOKEN: ${{ secrets.GH_TOKEN }}
+        INPUT_SOURCEDIRECTORY: output/website/
+      run: |
+        wget https://raw.githubusercontent.com/crash5/ghaction-publish-ghpages/v1/entrypoint.sh
+        bash ./entrypoint.sh
