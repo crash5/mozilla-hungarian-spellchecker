@@ -50,8 +50,8 @@ jobs:
         export PATH=$(pwd)/tools:$PATH
         chmod +x tools/mo
         mkdir output
-        bash ./scripts/create_ispell_archive.sh ../magyarispell/ output/${MAGYARISPELL_FILE_NAME}
-        bash ./scripts/create_mozilla_dictionary.sh ../magyarispell/ templates/install.rdf.mustache templates/manifest.json.mustache output/${EXTENSION_FILE_NAME}
+        bash ./scripts/create_ispell_archive.sh ./magyarispell/ output/${MAGYARISPELL_FILE_NAME}
+        bash ./scripts/create_mozilla_dictionary.sh ./magyarispell/ templates/install.rdf.mustache templates/manifest.json.mustache output/${EXTENSION_FILE_NAME}
         mkdir -p output/website
         bash ./scripts/create_website.sh templates/ output/website/
 
