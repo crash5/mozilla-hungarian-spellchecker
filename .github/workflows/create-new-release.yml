@@ -24,10 +24,10 @@ jobs:
         export EXTENSION_VERSION=${ISPELL_COMMIT_DATE}
         export EXTENSION_FILE_NAME=hungarian_dictionary-${EXTENSION_VERSION}.xpi
         export MAGYARISPELL_FILE_NAME=MagyarIspell_${ISPELL_COMMIT_HASH}.zip
-        echo "::set-env name=ISPELL_COMMIT_HASH::${ISPELL_COMMIT_HASH}"
-        echo "::set-env name=EXTENSION_VERSION::${EXTENSION_VERSION}"
-        echo "::set-env name=EXTENSION_FILE_NAME::${EXTENSION_FILE_NAME}"
-        echo "::set-env name=MAGYARISPELL_FILE_NAME::${MAGYARISPELL_FILE_NAME}"
+        echo "ISPELL_COMMIT_HASH=${ISPELL_COMMIT_HASH}" >> $GITHUB_ENV
+        echo "EXTENSION_VERSION=${EXTENSION_VERSION}" >> $GITHUB_ENV
+        echo "EXTENSION_FILE_NAME=${EXTENSION_FILE_NAME}" >> $GITHUB_ENV
+        echo "MAGYARISPELL_FILE_NAME=${MAGYARISPELL_FILE_NAME}" >> $GITHUB_ENV
 
     - name: Install dependencies for build
       run: sudo apt-get install -y zip m4 recode gawk
