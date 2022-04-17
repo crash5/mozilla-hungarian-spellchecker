@@ -15,11 +15,11 @@ jobs:
         repository: laszlonemeth/magyarispell
         ref: refs/heads/master
         fetch-depth: 1
-        path: '../magyarispell'
+        path: 'magyarispell'
 
     - name: Setup environment variables
       run: |
-        cd ../magyarispell
+        cd magyarispell
         export ISPELL_COMMIT_HASH=$(git log -1 --pretty=format:%h)
         export ISPELL_COMMIT_DATE=$(git log -1 --pretty=format:%ad --date=format:%Y.%m.%d.%H.%M)
         export EXTENSION_VERSION=${ISPELL_COMMIT_DATE}
@@ -35,13 +35,15 @@ jobs:
 
     - name: Build magyarispell
       run: |
-        cd ../magyarispell
+        cd magyarispell
         make
 
 
 # Create packages
     - name: Checkout tools and scripts
       uses: actions/checkout@v3
+      with:
+        clean: false
 
     - name: Create packages
       run: |
