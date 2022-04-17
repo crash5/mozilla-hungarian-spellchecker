@@ -90,7 +90,7 @@ jobs:
 
     - name: Deploy to GitHub Pages
       env:
-        INPUT_TOKEN: ${{ secrets.GH_TOKEN }}
+        INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         INPUT_SOURCEDIRECTORY: tools/output/website/
       run: |
         wget https://raw.githubusercontent.com/crash5/ghaction-publish-ghpages/v2/entrypoint.sh
