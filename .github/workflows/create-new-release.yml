@@ -15,6 +15,7 @@ jobs:
         repository: laszlonemeth/magyarispell
         ref: refs/heads/master
         fetch-depth: 1
+        path: '../magyarispell'
 
     - name: Setup environment variables
       run: |
