@@ -1,6 +1,6 @@
 # Magyar helyesírás-ellenőrző szótár a Mozilla termékekhez
 
-[![Build Status](https://travis-ci.com/crash5/mozilla-hungarian-spellchecker.svg?branch=master)](https://travis-ci.com/crash5/mozilla-hungarian-spellchecker)
+[![Build Status](https://github.com/crash5/mozilla-hungarian-spellchecker/actions/workflows/create-new-release.yml/badge.svg)](https://github.com/crash5/mozilla-hungarian-spellchecker/actions/workflows/create-new-release.yml)
 
 A szótár a Németh László által készített [Magyar Ispell](https://github.com/laszlonemeth/magyarispell)-ből kerül generálásra. Az egyes verziók a **[Release](../../releases)** oldal alatt találhatóak. A kiegészítő neve tartalmazza az elkészítéshez felhasznált szótár dátumát.
 
