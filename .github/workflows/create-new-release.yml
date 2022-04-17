@@ -43,15 +43,16 @@ jobs:
     - name: Checkout tools and scripts
       uses: actions/checkout@v3
       with:
-        clean: false
+        path: tools
 
     - name: Create packages
       run: |
+        cd tools
         export PATH=$(pwd)/tools:$PATH
         chmod +x tools/mo
         mkdir output
-        bash ./scripts/create_ispell_archive.sh ./magyarispell/ output/${MAGYARISPELL_FILE_NAME}
-        bash ./scripts/create_mozilla_dictionary.sh ./magyarispell/ templates/install.rdf.mustache templates/manifest.json.mustache output/${EXTENSION_FILE_NAME}
+        bash ./scripts/create_ispell_archive.sh ../magyarispell/ output/${MAGYARISPELL_FILE_NAME}
+        bash ./scripts/create_mozilla_dictionary.sh ../magyarispell/ templates/install.rdf.mustache templates/manifest.json.mustache output/${EXTENSION_FILE_NAME}
         mkdir -p output/website
         bash ./scripts/create_website.sh templates/ output/website/
 
@@ -73,7 +74,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided by GH Actions
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./output/${{ env.EXTENSION_FILE_NAME }}
+        asset_path: ./tools/output/${{ env.EXTENSION_FILE_NAME }}
         asset_name: ${{ env.EXTENSION_FILE_NAME }}
         asset_content_type: application/x-xpinstall
 
@@ -83,14 +84,14 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided by GH Actions
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./output/${{ env.MAGYARISPELL_FILE_NAME }}
+        asset_path: ./tools/output/${{ env.MAGYARISPELL_FILE_NAME }}
         asset_name: ${{ env.MAGYARISPELL_FILE_NAME }}
         asset_content_type: application/zip
 
     - name: Deploy to GitHub Pages
       env:
         INPUT_TOKEN: ${{ secrets.GH_TOKEN }}
-        INPUT_SOURCEDIRECTORY: output/website/
+        INPUT_SOURCEDIRECTORY: tools/output/website/
       run: |
         wget https://raw.githubusercontent.com/crash5/ghaction-publish-ghpages/v2/entrypoint.sh
         bash ./entrypoint.sh
