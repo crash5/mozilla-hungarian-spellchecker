@@ -89,5 +89,5 @@ jobs:
         INPUT_TOKEN: ${{ secrets.GH_TOKEN }}
         INPUT_SOURCEDIRECTORY: output/website/
       run: |
-        wget https://raw.githubusercontent.com/crash5/ghaction-publish-ghpages/v1/entrypoint.sh
+        wget https://raw.githubusercontent.com/crash5/ghaction-publish-ghpages/v2/entrypoint.sh
         bash ./entrypoint.sh
