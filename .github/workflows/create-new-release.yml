@@ -4,9 +4,17 @@ on:
   push:
     branches: [master]
 
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
     - name: Get magyarispell
@@ -58,35 +66,15 @@ jobs:
 
 
 # Deploy
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided by GH Actions
+    - name: Create release from generated files
+      uses: softprops/action-gh-release@v1
       with:
+        name: ${{ env.EXTENSION_VERSION }}
         tag_name: ${{ env.EXTENSION_VERSION }}
-        release_name: ${{ env.EXTENSION_VERSION }}
         body: "Generated from Magyar Ispell https://github.com/laszlonemeth/magyarispell (commit hash: ${{ env.ISPELL_COMMIT_HASH }})"
-
-    - name: Upload extension to release
-      uses: actions/upload-release-asset@v1.0.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided by GH Actions
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./tools/output/${{ env.EXTENSION_FILE_NAME }}
-        asset_name: ${{ env.EXTENSION_FILE_NAME }}
-        asset_content_type: application/x-xpinstall
-
-    - name: Upload compiled magyarispell to release
-      uses: actions/upload-release-asset@v1.0.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided by GH Actions
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./tools/output/${{ env.MAGYARISPELL_FILE_NAME }}
-        asset_name: ${{ env.MAGYARISPELL_FILE_NAME }}
-        asset_content_type: application/zip
+        files: |
+          ./tools/output/${{ env.MAGYARISPELL_FILE_NAME }}
+          ./tools/output/${{ env.EXTENSION_FILE_NAME }}
 
     - name: Deploy to GitHub Pages
       env:
