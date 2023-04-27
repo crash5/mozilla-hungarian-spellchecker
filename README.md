@@ -18,4 +18,3 @@ Kiterjesztések menü (Ctrl + Shift + A) > Fogaskerék ikon: Telepítés fájlb�
 ## Használt eszközök:
 - Magyar Ispell - http://magyarispell.sourceforge.net/ | https://github.com/laszlonemeth/magyarispell
 - Mustache template engine bash verzió - https://github.com/tests-always-included/mo
-- Travis CI - https://travis-ci.com/
