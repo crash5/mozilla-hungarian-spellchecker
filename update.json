@@ -1,0 +1,12 @@
+{
+    "addons": {
+        "hu-ispell@dictionaries.addons.mozilla.org": {
+            "updates": [
+                {
+                    "version": "2024.01.05.17.40",
+                    "update_link": "https://github.com/crash5/mozilla-hungarian-spellchecker/releases/download/2024.01.05.17.40/hungarian_dictionary-2024.01.05.17.40.xpi"
+                }
+            ]
+        }
+    }
+}
