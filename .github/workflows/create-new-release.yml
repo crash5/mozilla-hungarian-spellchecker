@@ -15,8 +15,9 @@ jobs:
     timeout-minutes: 10
 
     steps:
+# Build
     - name: Get magyarispell
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: laszlonemeth/magyarispell
         ref: refs/heads/master
@@ -47,7 +48,7 @@ jobs:
 
 # Create packages
     - name: Checkout tools and scripts
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         path: tools
 
@@ -62,8 +63,7 @@ jobs:
         mkdir -p output/website
         bash ./scripts/create_website.sh templates/ output/website/
 
-
-# Deploy
+# Create release, upload page artifact
     - name: Create release from generated files
       uses: softprops/action-gh-release@v1
       with:
@@ -74,10 +74,23 @@ jobs:
           ./tools/output/${{ env.MAGYARISPELL_FILE_NAME }}
           ./tools/output/${{ env.EXTENSION_FILE_NAME }}
 
-    - name: Deploy to GitHub Pages
-      env:
-        INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        INPUT_SOURCEDIRECTORY: tools/output/website/
-      run: |
-        wget https://raw.githubusercontent.com/crash5/ghaction-publish-ghpages/v2/entrypoint.sh
-        bash ./entrypoint.sh
+    - name: Upload website files as artifact
+      id: deployment
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: tools/output/website/
+
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+    environment:
+      name: github-pages
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
