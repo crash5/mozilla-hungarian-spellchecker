@@ -17,7 +17,7 @@ jobs:
     steps:
 # Build
     - name: Get magyarispell
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: laszlonemeth/magyarispell
         ref: refs/heads/master
@@ -48,7 +48,7 @@ jobs:
 
 # Create packages
     - name: Checkout tools and scripts
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         path: tools
 
@@ -65,7 +65,7 @@ jobs:
 
 # Create release, upload page artifact
     - name: Create release from generated files
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v3
       with:
         name: ${{ env.EXTENSION_VERSION }}
         tag_name: ${{ env.EXTENSION_VERSION }}
@@ -76,7 +76,7 @@ jobs:
 
     - name: Upload website files as artifact
       id: deployment
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@v5
       with:
         path: tools/output/website/
 
@@ -93,4 +93,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
