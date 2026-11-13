@@ -17,7 +17,7 @@ jobs:
     steps:
 # Build
     - name: Get magyarispell
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         repository: laszlonemeth/magyarispell
         ref: refs/heads/master
@@ -48,7 +48,7 @@ jobs:
 
 # Create packages
     - name: Checkout tools and scripts
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         path: tools
 
