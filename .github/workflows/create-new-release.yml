@@ -28,13 +28,15 @@ jobs:
       run: |
         cd magyarispell
         export ISPELL_COMMIT_HASH=$(git log -1 --pretty=format:%h)
-        export ISPELL_COMMIT_DATE=$(git log -1 --pretty=format:%ad --date=format:%Y.%m.%d.%H.%M)
+        export ISPELL_COMMIT_DATE=$(git log -1 --pretty=format:%ad --date=format:%Y%m%d.%l%M)
         export EXTENSION_VERSION=${ISPELL_COMMIT_DATE}
         export EXTENSION_FILE_NAME=hungarian_dictionary-${EXTENSION_VERSION}.xpi
+        export EXTENSION_FILE_NAME_UNSIGNED=hungarian_dictionary-${EXTENSION_VERSION}-unsigned.xpi
         export MAGYARISPELL_FILE_NAME=MagyarIspell_${ISPELL_COMMIT_HASH}.zip
         echo "ISPELL_COMMIT_HASH=${ISPELL_COMMIT_HASH}" >> $GITHUB_ENV
         echo "EXTENSION_VERSION=${EXTENSION_VERSION}" >> $GITHUB_ENV
         echo "EXTENSION_FILE_NAME=${EXTENSION_FILE_NAME}" >> $GITHUB_ENV
+        echo "EXTENSION_FILE_NAME_UNSIGNED=${EXTENSION_FILE_NAME_UNSIGNED}" >> $GITHUB_ENV
         echo "MAGYARISPELL_FILE_NAME=${MAGYARISPELL_FILE_NAME}" >> $GITHUB_ENV
 
     - name: Install dependencies for build
@@ -59,9 +61,11 @@ jobs:
         chmod +x tools/mo
         mkdir output
         bash ./scripts/create_ispell_archive.sh ../magyarispell/ output/${MAGYARISPELL_FILE_NAME}
-        bash ./scripts/create_mozilla_dictionary.sh ../magyarispell/ templates/install.rdf.mustache templates/manifest.json.mustache output/${EXTENSION_FILE_NAME}
+        bash ./scripts/create_mozilla_dictionary.sh ../magyarispell/ templates/install.rdf.mustache templates/manifest.json.mustache output/${EXTENSION_FILE_NAME_UNSIGNED}
         mkdir -p output/website
         bash ./scripts/create_website.sh templates/ output/website/
+
+# TODO(crash@veluna): sign extension (https://extensionworkshop.com/documentation/publish/signing-and-distribution-overview/)
 
 # Create release, upload page artifact
     - name: Create release from generated files
@@ -72,7 +76,7 @@ jobs:
         body: "Generated from Magyar Ispell https://github.com/laszlonemeth/magyarispell (commit hash: ${{ env.ISPELL_COMMIT_HASH }})"
         files: |
           ./tools/output/${{ env.MAGYARISPELL_FILE_NAME }}
-          ./tools/output/${{ env.EXTENSION_FILE_NAME }}
+          ./tools/output/${{ env.EXTENSION_FILE_NAME_UNSIGNED }}
 
     - name: Upload website files as artifact
       id: deployment
